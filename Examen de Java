@@ -1,0 +1,151 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Alumno {
+    private String nombre;
+    private List<Float> notas;
+
+    public Alumno(String nombre) {
+        this.nombre = nombre;
+        this.notas = new ArrayList<>();
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public List<Float> getNotas() {
+        return notas;
+    }
+
+    public void agregarNota(float nota) {
+        notas.add(nota);
+    }
+
+    public void editarNota(int indiceNota, float nuevaNota) {
+        if (indiceNota >= 0 && indiceNota < notas.size()) {
+            notas.set(indiceNota, nuevaNota);
+        } else {
+            System.out.println("Índice de nota inválido.");
+        }
+    }
+
+    public void eliminarNota(int indiceNota) {
+        if (indiceNota >= 0 && indiceNota < notas.size()) {
+            notas.remove(indiceNota);
+        } else {
+            System.out.println("Índice de nota inválido.");
+        }
+    }
+}
+
+class Profesor {
+    public void mostrarNotas(Alumno alumno) {
+        System.out.println("Notas del alumno " + alumno.getNombre() + ":");
+        List<Float> notas = alumno.getNotas();
+        for (int i = 0; i < notas.size(); i++) {
+            System.out.println(i + ". " + notas.get(i));
+        }
+    }
+
+    public void agregarNota(Alumno alumno, float nota) {
+        alumno.agregarNota(nota);
+        System.out.println("Nota agregada correctamente.");
+    }
+
+    public void editarNota(Alumno alumno, int indiceNota, float nuevaNota) {
+        alumno.editarNota(indiceNota, nuevaNota);
+        System.out.println("Nota editada correctamente.");
+    }
+
+    public void eliminarNota(Alumno alumno, int indiceNota) {
+        alumno.eliminarNota(indiceNota);
+        System.out.println("Nota eliminada correctamente.");
+    }
+}
+
+class PerfilFactory {
+    public Alumno crearAlumno(String nombre) {
+        return new Alumno(nombre);
+    }
+
+    public Profesor crearProfesor() {
+        return new Profesor();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        PerfilFactory perfilFactory = new PerfilFactory();
+        Alumno alumno = null;
+        Profesor profesor = null;
+
+        System.out.println("Ingrese su rol (alumno/profesor):");
+        String rol = scanner.nextLine().toLowerCase();
+
+        switch (rol) {
+            case "alumno":
+                System.out.println("Ingrese su nombre:");
+                String nombreAlumno = scanner.nextLine();
+                alumno = perfilFactory.crearAlumno(nombreAlumno);
+                System.out.println("Consultar notas del alumno: " + alumno.getNombre());
+                break;
+            case "profesor":
+                System.out.println("Ingrese el nombre del alumno:");
+                String nombreProfesor = scanner.nextLine();
+                alumno = perfilFactory.crearAlumno(nombreProfesor);
+                profesor = perfilFactory.crearProfesor();
+                int opcion;
+
+                do {
+                    System.out.println("Seleccione una acción:");
+                    System.out.println("1. Mostrar notas");
+                    System.out.println("2. Agregar nota");
+                    System.out.println("3. Editar nota");
+                    System.out.println("4. Eliminar nota");
+                    System.out.println("0. Salir");
+
+                    opcion = scanner.nextInt();
+                    scanner.nextLine();
+
+                    switch (opcion) {
+                        case 1:
+                            profesor.mostrarNotas(alumno);
+                            break;
+                        case 2:
+                            System.out.println("Ingrese la nota a agregar:");
+                            float notaAgregar = scanner.nextFloat();
+                            profesor.agregarNota(alumno, notaAgregar);
+                            break;
+                        case 3:
+                            profesor.mostrarNotas(alumno);
+                            System.out.println("Ingrese el índice de la nota a editar:");
+                            int indiceNotaEditar = scanner.nextInt();
+                            System.out.println("Ingrese la nueva nota:");
+                            float nuevaNota = scanner.nextFloat();
+                            profesor.editarNota(alumno, indiceNotaEditar, nuevaNota);
+                            break;
+                        case 4:
+                            profesor.mostrarNotas(alumno);
+                            System.out.println("Ingrese el índice de la nota a eliminar:");
+                            int indiceNotaEliminar = scanner.nextInt();
+                            profesor.eliminarNota(alumno, indiceNotaEliminar);
+                            break;
+                        case 0:
+                            System.out.println("Saliendo del sistema.");
+                            break;
+                        default:
+                            System.out.println("Opción inválida.");
+                            break;
+                    }
+                } while (opcion != 0);
+
+                break;
+            default:
+                System.out.println("Rol no válido.");
+                break;
+        }
+    }
+}
